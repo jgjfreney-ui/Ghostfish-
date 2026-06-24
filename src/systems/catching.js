@@ -23,14 +23,10 @@
       const obj = GB.World.interactableAt(f.x, f.y);
       if (!obj) return null;
 
-      switch (obj.type) {
-        case 'door':   return { type: 'door', building: obj.building };
-        case 'secret': return { type: 'secret', building: obj.building };
-        case 'rock':   return this._search(obj, 'rock', 'lift');
-        case 'bush':   return this._search(obj, 'grass', 'rustle');
-        case 'tree':   return this._search(obj, 'tree', 'rustle');
-        case 'water':  return this._search(obj, 'water', 'splash');
-      }
+      if (obj.type === 'door') return { type: 'door', building: obj.building };
+      if (obj.type === 'secret') return { type: 'secret', building: obj.building };
+      const cfg = GB.SEARCHABLES[obj.type];
+      if (cfg) return this._search(obj, cfg.habitat, cfg.sfx);
       return null;
     },
 
@@ -65,12 +61,23 @@
     },
 
     _emptyMsg(habitat) {
-      return GB.util.pick({
+      const map = {
         rock: ['Just damp earth and a startled worm.', 'A cosy little hollow. Empty today.'],
         grass: ['The grass rustles… then settles. Nothing.', 'Only a dandelion seed drifts up.'],
         tree: ['Bark, sap, and a flake of old cicada shell.', 'You shake the trunk. A single leaf falls.'],
         water: ['Ripples spread out. The water goes still.', 'Just your own reflection blinking back.'],
-      }[habitat]);
+        flower: ['The petals nod. Nothing stirs among them.', 'A whiff of pollen, and that\'s all.'],
+        log: ['Damp wood and a smell of rain. Nothing home.', 'You roll it back. Just woodlice tracks.'],
+        lamp: ['The lamp buzzes. Tonight, nothing answers it.', 'Only moonlight on the empty pole.'],
+        vending: ['It hums to itself. Nothing behind it.', 'Warm air, a faint smell of cola. Empty.'],
+        lantern: ['The old stone is cold and quiet.', 'No flame, no flicker. Not tonight.'],
+        puddle: ['The puddle ripples and stills.', 'Just mud and a bottle cap.'],
+        dirt: ['You dig a little. Just cool earth.', 'The ants have gone in for the night.'],
+        well: ['You peer down into the dark. Silence answers.', 'Cold air rises from below. Nothing more.'],
+        bench: ['Only gum and a lost button under here.', 'Empty shade beneath the slats.'],
+        trash: ['Ugh — just rubbish. Nothing living.', 'You think better of it and step back.'],
+      };
+      return GB.util.pick(map[habitat] || ['You search around… nothing this time.', 'Empty. Maybe later.']);
     },
 
     // Player pressed B: swing the net and try to catch.
@@ -126,14 +133,14 @@
     // spawn loose ambient critters so the world feels alive (called occasionally)
     ambientSpawn(player) {
       if (this.critters.length > 6) return;
-      // pick a random nearby object to emit from
+      // pick a random nearby searchable spot to emit from
       const cand = GB.World.objects.filter(o =>
-        ['bush', 'rock', 'tree', 'water'].includes(o.type) &&
+        GB.SEARCHABLES[o.type] && o.gx !== undefined &&
         Math.abs(o.gx * T - player.centerX()) < 160 &&
         Math.abs(o.gy * T - player.centerY()) < 130);
       if (!cand.length) return;
       const o = GB.util.pick(cand);
-      const habitat = o.type === 'bush' ? 'grass' : o.type;
+      const habitat = GB.SEARCHABLES[o.type].habitat;
       if (!GB.util.chance(0.5)) return;
       const sp = GB.rollSpecies(habitat, GB.Time.isNight);
       if (!sp || sp.rarity >= 3) return; // rares only via active searching

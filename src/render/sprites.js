@@ -77,6 +77,93 @@
     px(ctx, x + 10, y + 10, 2, 2, '#2a5a1e');
   };
 
+  // ---------- NEW SEARCHABLE SPOTS ----------
+  S.flowerbed = (ctx, x, y) => {
+    px(ctx, x + 1, y + 9, 14, 6, '#3f7a34');       // leafy base
+    const cols = ['#ff6a8a', '#ffd23a', '#ff9a3a', '#d28aff', '#6ad0ff'];
+    const spots = [[3, 6], [7, 4], [11, 7], [5, 10], [10, 11]];
+    spots.forEach((p, i) => {
+      const cc = cols[i % cols.length];
+      px(ctx, x + p[0], y + p[1], 3, 3, cc);
+      px(ctx, x + p[0] + 1, y + p[1] + 1, 1, 1, '#fff');
+    });
+  };
+  S.log = (ctx, x, y, active) => {
+    const dy = active ? 1 : 0;
+    px(ctx, x + 1, y + 8 + dy, 14, 6, '#6a4a2a');
+    px(ctx, x + 1, y + 8 + dy, 14, 2, '#7a5a3a');
+    px(ctx, x + 1, y + 9 + dy, 3, 4, '#8a6a3a');      // end-grain
+    px(ctx, x + 2, y + 10 + dy, 1, 2, '#5a3a1a');     // rings
+    px(ctx, x + 11, y + 11 + dy, 2, 1, '#4a2e16');    // bark crack
+  };
+  S.lamp = (ctx, x, y, night) => {
+    px(ctx, x + 7, y + 2, 2, 13, '#4a4a52');          // pole
+    px(ctx, x + 5, y + 14, 6, 1, '#3a3a42');          // base
+    px(ctx, x + 5, y - 4, 6, 6, '#3a3a42');           // head
+    const c = night ? '#fff0a0' : '#9aa0a8';
+    px(ctx, x + 6, y - 3, 4, 4, c);
+    if (night) {
+      ctx.fillStyle = 'rgba(255,240,160,0.18)';
+      ctx.beginPath(); ctx.arc(x + 8, y - 1, 11, 0, Math.PI * 2); ctx.fill();
+    }
+  };
+  S.vending = (ctx, x, y, night) => {
+    px(ctx, x + 1, y - 6, 13, 21, '#c03a4a');         // body
+    px(ctx, x + 2, y - 5, 7, 12, night ? '#ffe9a8' : '#9ab0c0'); // lit window
+    for (let r = 0; r < 3; r++) for (let cc = 0; cc < 2; cc++)
+      px(ctx, x + 3 + cc * 3, y - 4 + r * 4, 2, 3, ['#ff8a3a','#6ad0ff','#9bd86a','#ffd23a','#ff6a8a','#fff'][r*2+cc]);
+    px(ctx, x + 10, y - 4, 3, 6, '#2a2a30');           // panel
+    px(ctx, x + 2, y + 8, 11, 4, '#2a2a30');           // tray
+    if (night) { ctx.fillStyle = 'rgba(255,233,168,0.16)'; ctx.beginPath(); ctx.arc(x + 7, y + 2, 14, 0, Math.PI*2); ctx.fill(); }
+  };
+  S.lantern = (ctx, x, y, night) => {
+    px(ctx, x + 6, y + 11, 4, 4, '#8a8478');           // base
+    px(ctx, x + 5, y + 8, 6, 3, '#9a948a');            // pillar cap
+    px(ctx, x + 4, y + 2, 8, 6, '#9a948a');            // light box
+    px(ctx, x + 6, y + 4, 4, 3, night ? '#ffb060' : '#6a6458'); // flame slot
+    px(ctx, x + 3, y - 1, 10, 3, '#8a8478');           // roof
+    if (night) { ctx.fillStyle = 'rgba(255,170,90,0.2)'; ctx.beginPath(); ctx.arc(x + 8, y + 5, 9, 0, Math.PI*2); ctx.fill(); }
+  };
+  S.puddle = (ctx, x, y, t) => {
+    ctx.fillStyle = '#3a78b0';
+    ctx.beginPath(); ctx.ellipse(x + 8, y + 11, 7, 4, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#6aa8d8';
+    const w = Math.sin((t || 0) * 2) * 0.5 + 0.5;
+    px(ctx, x + 4, y + 10 + Math.floor(w), 4, 1, '#7ab8e8');
+    px(ctx, x + 9, y + 12, 3, 1, '#7ab8e8');
+  };
+  S.mound = (ctx, x, y) => {
+    px(ctx, x + 3, y + 9, 10, 5, '#8a6a44');
+    px(ctx, x + 4, y + 8, 8, 2, '#9a7a54');
+    px(ctx, x + 7, y + 10, 2, 2, '#2a1a0e');           // the hole
+    px(ctx, x + 5, y + 12, 1, 1, '#3a2a18');           // ants
+    px(ctx, x + 10, y + 11, 1, 1, '#3a2a18');
+  };
+  S.well = (ctx, x, y, night) => {
+    px(ctx, x + 2, y + 8, 12, 7, '#7a7280');           // stone ring
+    px(ctx, x + 3, y + 9, 10, 5, night ? '#10141f' : '#2a3440'); // dark water
+    px(ctx, x + 2, y + 8, 12, 1, '#9a92a0');
+    px(ctx, x + 2, y + 2, 2, 7, '#6a4a2a');            // posts
+    px(ctx, x + 12, y + 2, 2, 7, '#6a4a2a');
+    px(ctx, x + 1, y - 1, 14, 3, '#8a4a3a');           // little roof
+    if (night) { ctx.fillStyle = 'rgba(120,160,200,0.12)'; ctx.beginPath(); ctx.arc(x + 8, y + 11, 9, 0, Math.PI*2); ctx.fill(); }
+  };
+  S.bench = (ctx, x, y) => {
+    px(ctx, x + 2, y + 8, 12, 2, '#7a5a3a');           // seat
+    px(ctx, x + 2, y + 4, 12, 2, '#8a6a44');           // back
+    px(ctx, x + 3, y + 5, 1, 3, '#6a4a2a');            // back posts
+    px(ctx, x + 12, y + 5, 1, 3, '#6a4a2a');
+    px(ctx, x + 3, y + 10, 1, 4, '#5a3a2a');           // legs
+    px(ctx, x + 12, y + 10, 1, 4, '#5a3a2a');
+  };
+  S.bin = (ctx, x, y) => {
+    px(ctx, x + 4, y + 4, 8, 11, '#4a7a5a');           // can
+    px(ctx, x + 4, y + 4, 8, 2, '#5a8a6a');
+    px(ctx, x + 3, y + 2, 10, 2, '#3a5a44');           // lid
+    px(ctx, x + 6, y + 7, 1, 6, '#2a4a34');            // ridges
+    px(ctx, x + 9, y + 7, 1, 6, '#2a4a34');
+  };
+
   // buildings drawn over a footprint of (w,h) tiles, origin top-left world px
   S.building = (ctx, x, y, w, h, kind, lit) => {
     const W = w * T, H = h * T;

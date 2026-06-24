@@ -998,6 +998,7 @@
         else if (o.type === 'rock') list.push({ y: (o.gy + 1) * T, kind: 'rock', o });
         else if (o.type === 'bush') list.push({ y: (o.gy + 1) * T, kind: 'bush', o });
         else if (o.type === 'secret') list.push({ y: (o.gy + 1) * T, kind: 'secret', o });
+        else if (GB.SEARCHABLES[o.type]) list.push({ y: (o.gy + 1) * T, kind: 'spot', o });
       });
       GB.NPCs.list.forEach(n => list.push({ y: n.y + n.h, kind: 'npc', n }));
       list.push({ y: GB.Player.y + GB.Player.h, kind: 'player' });
@@ -1016,6 +1017,8 @@
           GB.Sprites.rock(c, r.o.gx * T - cam.x, r.o.gy * T - cam.y, r.o.state === 'active');
         } else if (r.kind === 'bush') {
           GB.Sprites.bush(c, r.o.gx * T - cam.x, r.o.gy * T - cam.y, r.o.state === 'active');
+        } else if (r.kind === 'spot') {
+          this._drawSpot(c, r.o, cam);
         } else if (r.kind === 'secret') {
           if (GB.Time.isNight) { // hint a glow at night
             c.fillStyle = 'rgba(181,154,255,0.35)';
@@ -1026,6 +1029,24 @@
         } else if (r.kind === 'player') {
           GB.Player.draw(c, cam);
         }
+      }
+    },
+
+    _drawSpot(c, o, cam) {
+      const x = o.gx * T - cam.x, y = o.gy * T - cam.y;
+      const night = GB.Time.isNight;
+      const active = o.state === 'active';
+      switch (o.type) {
+        case 'flowerbed': GB.Sprites.flowerbed(c, x, y); break;
+        case 'log':       GB.Sprites.log(c, x, y, active); break;
+        case 'lamp':      GB.Sprites.lamp(c, x, y, night); break;
+        case 'vending':   GB.Sprites.vending(c, x, y, night); break;
+        case 'lantern':   GB.Sprites.lantern(c, x, y, night); break;
+        case 'puddle':    GB.Sprites.puddle(c, x, y, GB.World.time); break;
+        case 'mound':     GB.Sprites.mound(c, x, y); break;
+        case 'well':      GB.Sprites.well(c, x, y, night); break;
+        case 'bench':     GB.Sprites.bench(c, x, y); break;
+        case 'bin':       GB.Sprites.bin(c, x, y); break;
       }
     },
 

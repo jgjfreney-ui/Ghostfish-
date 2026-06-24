@@ -56,9 +56,13 @@ corner Ryosuke isn't quite ready to deal with). Mum and Dad hand you a **net, a
 torch, and a camera**, and the only mission is to *enjoy the day.*
 
 1. **Morning** — Wake in your room. Head downstairs and out into town.
-2. **Daytime** — Roam one big, open map (no loading zones). Lift **rocks**, search
-   **grass** and **bushes**, shake **trees**, and check the **water's edge**. Each
-   habitat hides different bugs. Talk to NPCs (Dad's an American expat, Mum's a
+2. **Daytime** — Roam one big, open map (no loading zones). There are **14 kinds
+   of spots** to poke at: lift **rocks**, rustle **grass/bushes/flowerbeds**, shake
+   **trees**, roll **logs**, dig **ant-mounds**, wade **puddles**, check the
+   **water's edge**, look under **park benches** — and after dark the night gathers
+   at **streetlamps**, **vending machines**, **stone lanterns**, **trash bins**, and
+   the **old well**, each with its own bugs and ghosts. Talk to NPCs (Dad's an
+   American expat, Mum's a
    local — their lines shift with the story). Do your **chore**. Enter the store,
    school, clinic, and shrine. Catching things and finishing tasks earns **XP and
    levels**.

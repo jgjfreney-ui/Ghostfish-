@@ -103,6 +103,95 @@
       palette: ['#4a6a7a', '#8ab0c0', '#1a2a34'], speed: 16, flighty: 0.4, glow: '#8ab0c0',
       blurb: 'Drip… drip… it weeps cold water that never reaches the floor.' },
 
+    // ---- FLOWER BEDS ----
+    { id: 'bug_honeybee', name: 'Honeybee', kind: 'bug', habitat: 'flower', time: 'day', rarity: 1,
+      palette: ['#e0a830', '#ffd860', '#3a2a08'], speed: 24, flighty: 0.55, blurb: 'Fat with pollen, drunk on summer.' },
+    { id: 'bug_cabbagewhite', name: 'Cabbage White', kind: 'bug', habitat: 'flower', time: 'day', rarity: 1,
+      palette: ['#eef0f0', '#ffffff', '#6a6a5a'], speed: 22, flighty: 0.5, blurb: 'The first butterfly any kid ever catches.' },
+    { id: 'bug_hawkmoth', name: 'Hawk Moth', kind: 'bug', habitat: 'flower', time: 'night', rarity: 2,
+      palette: ['#6a5a4a', '#a08a6a', '#2a2018'], speed: 30, flighty: 0.6, blurb: 'Hovers like a tiny hummingbird over the night blooms.' },
+    { id: 'g_petalwisp', name: 'Petal Wisp', kind: 'ghost', habitat: 'flower', time: 'night', rarity: 2,
+      palette: ['#e08ab0', '#ffc0d8', '#7a3a5a'], speed: 18, flighty: 0.4, glow: '#ffc0e0',
+      blurb: 'A handful of fallen petals that forgot to land.' },
+
+    // ---- FALLEN LOGS ----
+    { id: 'bug_woodlouse', name: 'Woodlouse', kind: 'bug', habitat: 'log', time: 'any', rarity: 1,
+      palette: ['#7a7280', '#9a92a0', '#3a3540'], speed: 12, flighty: 0.2, blurb: 'Curls up tight the moment the log lifts.' },
+    { id: 'bug_earwig', name: 'Earwig', kind: 'bug', habitat: 'log', time: 'night', rarity: 1,
+      palette: ['#6a4a2a', '#9a6a3a', '#2a1a0a'], speed: 26, flighty: 0.5, blurb: 'Pincers up, scuttling for the dark. Harmless, mostly.' },
+    { id: 'bug_longhorn', name: 'Longhorn Beetle', kind: 'bug', habitat: 'log', time: 'day', rarity: 2,
+      palette: ['#3a4a6a', '#6a7a9a', '#1a2030'], speed: 18, flighty: 0.35, blurb: 'Antennae longer than its whole body.' },
+    { id: 'bug_clickbeetle', name: 'Click Beetle', kind: 'bug', habitat: 'log', time: 'night', rarity: 2,
+      palette: ['#3a2a1a', '#5a4030', '#150d06'], speed: 20, flighty: 0.4, blurb: 'Flip it over and — CLICK — it snaps itself upright.' },
+    { id: 'g_mossback', name: 'Mossback', kind: 'ghost', habitat: 'log', time: 'night', rarity: 3,
+      palette: ['#3a5a3a', '#5a7a4a', '#1a2a1a'], speed: 16, flighty: 0.4, glow: '#7aae6a',
+      blurb: 'A little spirit grown over with moss, blinking under the log for years.' },
+
+    // ---- STREETLAMPS (the night gathers here) ----
+    { id: 'bug_junebug', name: 'June Bug', kind: 'bug', habitat: 'lamp', time: 'night', rarity: 1,
+      palette: ['#4a3a1a', '#7a6030', '#241a0a'], speed: 22, flighty: 0.5, blurb: 'Bonks into the lamp again and again. Never learns.' },
+    { id: 'bug_lacewing', name: 'Green Lacewing', kind: 'bug', habitat: 'lamp', time: 'night', rarity: 2,
+      palette: ['#8ad08a', '#bfffbf', '#3a6a3a'], speed: 18, flighty: 0.45, glow: '#bfffbf',
+      blurb: 'Wings like green stained glass under the lamplight.' },
+    { id: 'bug_tigermoth', name: 'Tiger Moth', kind: 'bug', habitat: 'lamp', time: 'night', rarity: 3,
+      palette: ['#d08a3a', '#ffd070', '#3a2008'], speed: 28, flighty: 0.6, blurb: 'Bold orange stripes that say: do not eat me.' },
+    { id: 'g_lamplight', name: 'Lamplight Ghost', kind: 'ghost', habitat: 'lamp', time: 'night', rarity: 2,
+      palette: ['#e0c060', '#fff0a0', '#6a5020'], speed: 18, flighty: 0.45, glow: '#fff0a0',
+      blurb: 'It just likes the warm buzz of the streetlight. Who wouldn\'t.' },
+
+    // ---- VENDING MACHINES ----
+    { id: 'bug_silverfish', name: 'Silverfish', kind: 'bug', habitat: 'vending', time: 'night', rarity: 1,
+      palette: ['#b0b4c0', '#dfe2ee', '#5a5e6a'], speed: 30, flighty: 0.55, blurb: 'A wriggle of living mercury behind the warm machine.' },
+    { id: 'g_canclatter', name: 'Can-Clatter', kind: 'ghost', habitat: 'vending', time: 'night', rarity: 2,
+      palette: ['#c04040', '#ff7a6a', '#601818'], speed: 22, flighty: 0.5, glow: '#ff8a7a',
+      blurb: 'A soda can that never got drunk. It rattles down the chute forever.' },
+
+    // ---- STONE LANTERNS ----
+    { id: 'bug_candlemoth', name: 'Candle Moth', kind: 'bug', habitat: 'lantern', time: 'night', rarity: 2,
+      palette: ['#e8e0c0', '#fff8e0', '#6a6450'], speed: 24, flighty: 0.55, glow: '#fff4cf',
+      blurb: 'Pale wings drawn to any small flame.' },
+    { id: 'g_flamekeeper', name: 'Flame-Keeper', kind: 'ghost', habitat: 'lantern', time: 'night', rarity: 3,
+      palette: ['#ff8a3a', '#ffd0a0', '#802000'], speed: 16, flighty: 0.4, glow: '#ffb06a',
+      blurb: 'It has kept the lantern lit since long before you were born.' },
+
+    // ---- PUDDLES & DRAINS ----
+    { id: 'bug_mosquito', name: 'Mosquito', kind: 'bug', habitat: 'puddle', time: 'night', rarity: 1,
+      palette: ['#5a5a6a', '#8a8a9a', '#2a2a34'], speed: 32, flighty: 0.65, blurb: 'The sound of summer nights you wish you couldn\'t hear.' },
+    { id: 'bug_divingbeetle', name: 'Diving Beetle', kind: 'bug', habitat: 'puddle', time: 'any', rarity: 2,
+      palette: ['#2a4a3a', '#4a6a5a', '#10241a'], speed: 20, flighty: 0.4, blurb: 'Carries its own bubble of air down into the murk.' },
+    { id: 'bug_mayfly', name: 'Mayfly', kind: 'bug', habitat: 'puddle', time: 'night', rarity: 2,
+      palette: ['#d0d8e0', '#f0f4ff', '#7a8290'], speed: 26, flighty: 0.55, blurb: 'Lives a single day. Tries to make it count.' },
+
+    // ---- ANT MOUNDS / DUG EARTH ----
+    { id: 'bug_ant', name: 'Carpenter Ant', kind: 'bug', habitat: 'dirt', time: 'day', rarity: 1,
+      palette: ['#3a2018', '#5a3a28', '#150a06'], speed: 24, flighty: 0.4, blurb: 'Carrying a crumb ten times its size, uphill, forever.' },
+    { id: 'bug_antlion', name: 'Antlion', kind: 'bug', habitat: 'dirt', time: 'day', rarity: 2,
+      palette: ['#8a7a5a', '#b0a080', '#3a3020'], speed: 14, flighty: 0.3, blurb: 'Digs a little sand-pit trap and waits at the bottom.' },
+    { id: 'bug_molecricket', name: 'Mole Cricket', kind: 'bug', habitat: 'dirt', time: 'night', rarity: 2,
+      palette: ['#6a4a30', '#8a6a44', '#2a1a10'], speed: 18, flighty: 0.4, blurb: 'Velvet shovel-hands. It sings from under the ground.' },
+
+    // ---- THE OLD WELL (night) ----
+    { id: 'g_dropchild', name: 'Droplet Child', kind: 'ghost', habitat: 'well', time: 'night', rarity: 3,
+      palette: ['#6a9ac0', '#a0d0f0', '#2a4a6a'], speed: 18, flighty: 0.45, glow: '#a0d8ff',
+      blurb: 'A small cold voice from far down. It only wants to play.' },
+    { id: 'g_welldweller', name: 'Well-Dweller', kind: 'ghost', habitat: 'well', time: 'night', rarity: 4,
+      palette: ['#3a4a5a', '#6a8090', '#10181f'], speed: 24, flighty: 0.55, glow: '#8aa0b0',
+      blurb: 'Long hair, longer patience. Be gentle, and it will rise to meet your net.' },
+
+    // ---- PARK BENCHES ----
+    { id: 'bug_fieldcricket', name: 'Field Cricket', kind: 'bug', habitat: 'bench', time: 'night', rarity: 1,
+      palette: ['#2a2a18', '#4a4a30', '#10100a'], speed: 24, flighty: 0.5, blurb: 'Chirps from the cool shade beneath the slats.' },
+    { id: 'g_benchsitter', name: 'Bench-Sitter', kind: 'ghost', habitat: 'bench', time: 'night', rarity: 2,
+      palette: ['#7a7a8a', '#a0a0b0', '#34343f'], speed: 14, flighty: 0.35, glow: '#b0b0c8',
+      blurb: 'It just likes to watch the empty park. It saves you a seat.' },
+
+    // ---- TRASH BINS ----
+    { id: 'bug_fruitfly', name: 'Fruit Fly', kind: 'bug', habitat: 'trash', time: 'night', rarity: 1,
+      palette: ['#7a5a3a', '#a07a4a', '#2a1a0a'], speed: 34, flighty: 0.7, blurb: 'A cloud of them, gone the instant you swing.' },
+    { id: 'g_tanuki', name: 'Tanuki Spirit', kind: 'ghost', habitat: 'trash', time: 'night', rarity: 3,
+      palette: ['#7a5a3a', '#b89a6a', '#3a2818'], speed: 22, flighty: 0.5, glow: '#d8b888',
+      blurb: 'A round little raccoon-dog spirit, caught mid-snack. Not even sorry.' },
+
     // ---- ONE-OF-ONES (story; never spawn randomly) ----
     { id: 'g_father', name: 'Ghost of the Father', kind: 'ghost', habitat: 'cave', time: 'any', rarity: 5,
       unique: true, palette: ['#5a2a2a', '#8a4a4a', '#1a0808'], speed: 24, flighty: 0.5, glow: '#a04a4a',

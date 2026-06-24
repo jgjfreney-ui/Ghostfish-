@@ -69,6 +69,20 @@
       this._scatterFlowers(70);
       this._scatterWaterSpots(20);
 
+      // ---- new searchable spots, day & night ----
+      const grass = (x, y) => tiles[y][x] === 'grass';
+      const grassOrFlower = (x, y) => tiles[y][x] === 'grass' || tiles[y][x] === 'flowers';
+      this._scatterObject('flowerbed', 34, grassOrFlower);
+      this._scatterObject('log', 26, grass);
+      this._scatterObject('mound', 22, grass);
+      this._scatterObject('bench', 12, grassOrFlower);
+      this._scatterObject('lamp', 22, (x, y) => grass(x, y) && this._adjPath(x, y));
+      this._scatterObject('vending', 8, (x, y) => grass(x, y) && this._adjPath(x, y));
+      this._scatterObject('bin', 10, (x, y) => grass(x, y) && this._adjPath(x, y));
+      this._scatterObject('puddle', 18, (x, y) => grass(x, y) && (this._adjPath(x, y) || this._adjTile(x, y, 'sand')));
+      this._scatterObject('lantern', 10, (x, y) => grass(x, y) && this._adjBuildingKind(x, y, 'shrine'));
+      this._scatterObject('well', 5, grass);
+
       this._buildCollision();
     },
 
@@ -166,6 +180,14 @@
     _nearObject(x, y, r) {
       return this.objects.some(o => o.gx !== undefined && Math.abs(o.gx - x) <= r && Math.abs(o.gy - y) <= r);
     },
+    _adjPath(x, y) { return this._adjTile(x, y, 'path'); },
+    _adjTile(x, y, t) {
+      return [[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy]) => this._get(x+dx, y+dy) === t);
+    },
+    _adjBuildingKind(x, y, kind) {
+      return this.buildings.some(b => b.kind === kind &&
+        x >= b.x - 3 && x < b.x + b.w + 3 && y >= b.y - 3 && y < b.y + b.h + 3);
+    },
 
     _buildCollision() {
       const solid = [];
@@ -181,10 +203,11 @@
         const [dx, dy] = b.doorTile;
         if (solid[dy] && solid[dy][dx] !== undefined) solid[dy][dx] = false;
       });
-      // trees + rocks solid
+      // searchable spots flagged solid in the registry block movement
       this.objects.forEach(o => {
-        if ((o.type === 'tree' || o.type === 'rock') && o.gx !== undefined)
-          if (solid[o.gy]) solid[o.gy][o.gx] = true;
+        const cfg = GB.SEARCHABLES && GB.SEARCHABLES[o.type];
+        if (cfg && cfg.solid && o.gx !== undefined && solid[o.gy])
+          solid[o.gy][o.gx] = true;
       });
       // map border
       for (let x = 0; x < W; x++) { solid[0][x] = true; solid[H-1][x] = true; }
@@ -201,7 +224,7 @@
     // find an interactable object whose tile sits in front of the player
     interactableAt(gx, gy) {
       return this.objects.find(o => o.gx === gx && o.gy === gy &&
-        ['rock', 'bush', 'tree', 'water', 'door', 'secret'].includes(o.type));
+        (GB.SEARCHABLES[o.type] || o.type === 'door' || o.type === 'secret'));
     },
 
     update(dt) {
