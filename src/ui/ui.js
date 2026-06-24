@@ -46,8 +46,14 @@
       this._text(c, moon + clock, 116, 4, GB.Time.isNight ? '#b9c8ff' : '#ffe9a8');
 
       const t = GB.Collection.totals();
-      this._text(c, `✦ ${t.all}/${t.allTotal}`, 210, 4, '#bfe3ff');
-      this._text(c, GB.Reputation.standingLabel(), 252, 4, this._standColor(), 'right');
+      this._text(c, `Lv${GB.Story.level}`, 168, 4, '#ffd24a');
+      this._text(c, `✦${t.all}/${t.allTotal}`, 196, 4, '#bfe3ff');
+      // item icons (net / torch / camera) once owned
+      let ix = 236;
+      if (GB.Story.hasNet) { this._text(c, '⌒', ix, 4, '#e8e8f0'); ix += 10; }
+      if (GB.Story.hasTorch) { this._text(c, '▮', ix, 4, '#ffd24a'); ix += 10; }
+      if (GB.Story.hasCamera) { this._text(c, '⊡', ix, 4, '#9ad0ff'); ix += 10; }
+      this._text(c, GB.Reputation.standingLabel(), VW - 2, 4, this._standColor(), 'right');
 
       // chore reminder (small, lower-left) during day
       if (!GB.Time.isNight && GB.Reputation.chore && !GB.Reputation.chore.done) {

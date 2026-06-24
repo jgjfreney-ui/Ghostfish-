@@ -234,6 +234,71 @@
     }
   };
 
+  // ---------- BEDROOM FURNITURE ----------
+  S.bed = (ctx, x, y) => {
+    px(ctx, x, y, T * 2, T * 3, '#6a4a3a');          // frame
+    px(ctx, x + 1, y + 1, T * 2 - 2, T - 2, '#e8e2ee'); // pillow
+    px(ctx, x + 1, y + T, T * 2 - 2, T * 2 - 1, '#5a8ad0'); // blanket
+    px(ctx, x + 2, y + T + 2, T * 2 - 4, 2, '#7aa8e8');
+    px(ctx, x + 2, y + T + 8, T * 2 - 4, 2, '#7aa8e8');
+  };
+  S.shelf = (ctx, x, y, have) => {
+    const W = T * 2, H = T * 3;
+    px(ctx, x, y, W, H, '#5a4030');
+    px(ctx, x + 1, y + 1, W - 2, H - 2, '#3a281c');
+    // little enclosures lit up for caught species
+    let k = 0;
+    for (let r = 0; r < 4; r++)
+      for (let ccol = 0; ccol < 3; ccol++) {
+        const cx = x + 2 + ccol * 9, cy = y + 2 + r * 7;
+        const filled = k < have;
+        px(ctx, cx, cy, 8, 6, filled ? '#bfe3ff' : '#241a14');
+        if (filled) px(ctx, cx + 1, cy + 1, 6, 4, 'rgba(120,200,255,0.5)');
+        k++;
+      }
+  };
+  S.desk = (ctx, x, y) => {
+    px(ctx, x, y, T * 2, 5, '#7a5a3a');
+    px(ctx, x + 1, y + 5, 3, T - 5, '#5a4030');
+    px(ctx, x + T * 2 - 4, y + 5, 3, T - 5, '#5a4030');
+    // handheld console on top
+    S.handheld(ctx, x + 8, y - 8, false);
+  };
+  S.handheld = (ctx, x, y, on) => {
+    px(ctx, x, y, 10, 14, '#b8b0a0');     // body
+    px(ctx, x + 1, y + 1, 8, 6, on ? '#9bd86a' : '#3a4a3a'); // screen
+    px(ctx, x + 2, y + 9, 2, 2, '#3a3a44'); // dpad
+    px(ctx, x + 6, y + 9, 2, 2, '#a03a4a'); // buttons
+    px(ctx, x + 8, y + 11, 1, 1, '#a03a4a');
+  };
+  S.spiderweb = (ctx, x, y) => {
+    ctx.strokeStyle = 'rgba(220,224,240,0.55)';
+    ctx.lineWidth = 0.5;
+    // radial strands from the corner
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath(); ctx.moveTo(x, y);
+      ctx.lineTo(x + 14, y + i * 4 + 2); ctx.stroke();
+    }
+    for (let r = 3; r <= 12; r += 4) {
+      ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x, y + r); ctx.stroke();
+    }
+  };
+  S.window = (ctx, x, y, night) => {
+    px(ctx, x - 1, y - 1, T + 2, T + 2, '#4a3424'); // frame
+    if (night) {
+      px(ctx, x, y, T, T, '#1a1a3a');
+      px(ctx, x + 4, y + 3, 1, 1, '#fff'); px(ctx, x + 10, y + 6, 1, 1, '#fff');
+      px(ctx, x + 7, y + 10, 1, 1, '#cfd0ff');
+      px(ctx, x + 9, y + 2, 3, 3, '#e8e8c0'); // moon
+    } else {
+      px(ctx, x, y, T, T, '#9cd0f0');
+      px(ctx, x + 2, y + 9, T - 4, 4, '#7ac060'); // hill
+      px(ctx, x + 10, y + 2, 3, 3, '#fff4a8');     // sun
+    }
+    px(ctx, x + T / 2 - 1, y, 2, T, '#4a3424');
+    px(ctx, x, y + T / 2 - 1, T, 2, '#4a3424');
+  };
+
   // sparkle particle
   S.sparkle = (ctx, x, y, c) => {
     px(ctx, x, y - 2, 1, 5, c);

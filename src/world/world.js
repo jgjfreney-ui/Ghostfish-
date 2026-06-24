@@ -2,7 +2,7 @@
 // One continuous map (no sectioning). Terrain grid + object/interactable list.
 (function (GB) {
   const T = GB.TILE;
-  const W = 64, H = 48; // tiles
+  const W = 96, H = 72; // tiles — a bigger, walkable hometown
 
   const World = {
     w: W, h: H, pxW: W * T, pxH: H * T,
@@ -28,39 +28,41 @@
       this.objects = [];
       this.buildings = [];
 
-      // ---- a pond + river running down the east ----
-      this._blob(48, 30, 6, 'water');
+      // ---- a wide pond + a river winding down the east side ----
+      this._blob(74, 40, 9, 'water');
+      this._blob(70, 44, 6, 'water');
       for (let y = 0; y < H; y++) {
-        const cx = 52 + Math.round(Math.sin(y * 0.3) * 3);
+        const cx = 86 + Math.round(Math.sin(y * 0.22) * 4);
         for (let x = cx; x < cx + 2; x++) if (x >= 0 && x < W) tiles[y][x] = 'water';
       }
       // sandy banks around water
       this._ring('water', 'sand');
 
-      // ---- main path: a soft cross through town ----
-      for (let x = 4; x < W - 4; x++) this._set(x, 24, 'path');
-      for (let y = 6; y < H - 6; y++) this._set(20, y, 'path');
-      for (let y = 6; y < H - 6; y++) this._set(34, y, 'path');
+      // ---- roads: the town's main streets ----
+      for (let x = 4; x < W - 4; x++) this._set(x, 34, 'path');   // high street
+      for (let x = 6; x < W - 6; x++) this._set(x, 52, 'path');   // lower lane
+      for (let y = 8; y < H - 6; y++) this._set(28, y, 'path');   // central road
+      for (let y = 8; y < H - 6; y++) this._set(52, y, 'path');   // east road
+      for (let y = 30; y < 56; y++) this._set(16, y, 'path');     // lane to home
 
-      // ---- buildings (handcrafted positions, designed feel) ----
-      // home is bottom-left so "getting home before dark" is a real journey
-      this._addBuilding('home', 'Home', 6, 36, 6, 5, { secret: [9, 41] });
-      this._addBuilding('store', 'General Store', 14, 16, 6, 5, { secret: [14, 20] });
-      this._addBuilding('school', 'School', 26, 10, 8, 6, { secret: [33, 15] });
-      this._addBuilding('hospital', 'Clinic', 38, 16, 7, 5, { secret: [44, 20] });
-      this._addBuilding('shrine', 'Old Shrine', 40, 34, 5, 5, { secret: [40, 38] });
-      // abandoned buildings hidden in the nature fringes
-      this._addBuilding('abandoned', 'Abandoned House', 6, 6, 5, 4, { secret: [8, 9], abandoned: true });
-      this._addBuilding('abandoned', 'Ruined Mill', 54, 6, 5, 4, { secret: [56, 9], abandoned: true });
+      // ---- buildings — Ryosuke's hometown, laid out to feel lived-in ----
+      // home is down in the south-west; the school is up north (the intro lets out there)
+      this._addBuilding('home', 'Ryosuke\'s House', 10, 54, 6, 5, { secret: [13, 59] });
+      this._addBuilding('school', 'Akebono Elementary', 24, 8, 9, 6, { secret: [32, 13] });
+      this._addBuilding('store', 'Sato General Store', 46, 26, 6, 5, { secret: [46, 30] });
+      this._addBuilding('hospital', 'Town Clinic', 60, 24, 7, 5, { secret: [66, 28] });
+      this._addBuilding('shrine', 'Inari Shrine', 64, 46, 5, 5, { secret: [64, 50] });
+      // abandoned places hidden in the nature fringes
+      this._addBuilding('abandoned', 'Old Yamada House', 8, 8, 5, 4, { secret: [10, 11], abandoned: true });
+      this._addBuilding('abandoned', 'Ruined Mill', 80, 10, 5, 4, { secret: [82, 13], abandoned: true });
+      this._addBuilding('abandoned', 'Forgotten Bus Stop', 78, 60, 5, 4, { secret: [80, 63], abandoned: true });
 
-      // ---- scatter nature ----
-      // tree clusters (woods to north + fringes)
+      // ---- scatter nature (counts scaled up for the bigger map) ----
       this._scatterTrees();
-      // rocks (lift for bugs), bushes (rustle), flowers, water bugs
-      this._scatterObject('rock', 26, (x, y) => tiles[y][x] === 'grass');
-      this._scatterObject('bush', 30, (x, y) => tiles[y][x] === 'grass');
-      this._scatterFlowers(34);
-      this._scatterWaterSpots(10);
+      this._scatterObject('rock', 48, (x, y) => tiles[y][x] === 'grass');
+      this._scatterObject('bush', 56, (x, y) => tiles[y][x] === 'grass');
+      this._scatterFlowers(70);
+      this._scatterWaterSpots(20);
 
       this._buildCollision();
     },
@@ -113,10 +115,10 @@
 
     _scatterTrees() {
       // dense woods band across the top + sprinkles
-      for (let i = 0; i < 150; i++) {
+      for (let i = 0; i < 360; i++) {
         const x = GB.util.randInt(1, W - 2);
         const y = GB.util.randInt(1, H - 2);
-        const inWoods = y < 8 || GB.util.chance(0.25);
+        const inWoods = y < 10 || y > H - 8 || GB.util.chance(0.22);
         if (!inWoods) continue;
         if (this.tiles[y][x] !== 'grass') continue;
         if (this._inBuilding(x, y, 1)) continue;

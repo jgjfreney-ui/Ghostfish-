@@ -105,6 +105,23 @@
                'E3','G3','C4','G3','D3','F3','A3','F3','G3','B3','D4','B3','C4','E4','G4','C5'],
         leadType: 'square', bassType: 'triangle', arpType: 'square', arpGain: 0.06,
       },
+      // the grandparents / mental-health scene. slow, music-box, aching minor.
+      tender: {
+        bpm: 60,
+        lead: ['A4','_','_','_','C5','_','B4','_','A4','_','_','_','E4','_','_','_',
+               'F4','_','_','_','A4','_','G4','_','E4','_','_','_','_','_','_','_',
+               'D4','_','E4','_','F4','_','E4','_','C4','_','_','_','E4','_','_','_',
+               'A4','_','G4','_','F4','_','E4','_','A3','_','_','_','_','_','_','_'],
+        bass: ['A2','_','_','_','_','_','_','_','F2','_','_','_','_','_','_','_',
+               'D2','_','_','_','_','_','_','_','E2','_','_','_','_','_','_','_',
+               'F2','_','_','_','_','_','_','_','C2','_','_','_','_','_','_','_',
+               'D2','_','_','_','_','_','_','_','E2','_','_','_','E1','_','_','_'],
+        arp:  ['A3','_','E4','_','_','_','C4','_','F3','_','C4','_','_','_','A3','_',
+               'D3','_','A3','_','_','_','F3','_','E3','_','B3','_','_','_','G3','_',
+               'F3','_','C4','_','_','_','A3','_','C3','_','G3','_','_','_','E3','_',
+               'D3','_','A3','_','_','_','F3','_','E3','_','B3','_','_','_','_','_'],
+        leadType: 'triangle', bassType: 'sine', arpType: 'sine', arpGain: 0.045,
+      },
     },
 
     playSong(name) {
@@ -235,6 +252,55 @@
           seq.forEach((n, k) => this._voice(NOTE[n], t + k * 0.14, 0.2, { type: 'triangle', gain: 0.14, dest: d }));
           break;
         }
+        case 'levelup': {
+          const seq = ['C5', 'D5', 'E5', 'G5', 'C6', '_', 'G5', 'C6', 'E6'];
+          seq.forEach((n, k) => n !== '_' && this._voice(NOTE[n], t + k * 0.08, 0.18, { type: 'square', gain: 0.15, dest: d }));
+          this._voice(NOTE['C4'], t, 0.5, { type: 'triangle', gain: 0.1, dest: d });
+          break;
+        }
+        case 'owl': { // two soft hoots
+          [0, 0.35].forEach(off => {
+            const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(420, t + off);
+            o.frequency.exponentialRampToValueAtTime(300, t + off + 0.25);
+            g.gain.setValueAtTime(0.0001, t + off);
+            g.gain.linearRampToValueAtTime(0.06, t + off + 0.05);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + off + 0.3);
+            o.connect(g); g.connect(d); o.start(t + off); o.stop(t + off + 0.35);
+          });
+          break;
+        }
+        case 'cricket': { // a brief chirp trill
+          for (let k = 0; k < 3; k++)
+            this._voice(7000 + Math.random() * 800, t + k * 0.04, 0.02, { type: 'square', gain: 0.02, dest: d });
+          break;
+        }
+        case 'photo': { // camera shutter
+          this._noiseBurst(t, 0.05, 0.12, d, 4000);
+          this._voice(NOTE['C6'], t + 0.05, 0.04, { type: 'square', gain: 0.08, dest: d });
+          break;
+        }
+        case 'wake': { // slow soft rise, eyes opening
+          const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(220, t);
+          o.frequency.linearRampToValueAtTime(440, t + 1.2);
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(0.06, t + 0.6);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
+          o.connect(g); g.connect(d); o.start(t); o.stop(t + 1.5);
+          break;
+        }
+        case 'book': { // page / shelf
+          this._noiseBurst(t, 0.12, 0.06, d, 2500);
+          break;
+        }
+        case 'gameboy': { // playful handheld jingle
+          const seq = ['E5', 'E5', '_', 'E5', '_', 'C5', 'E5', '_', 'G5', '_', '_', 'G4'];
+          seq.forEach((n, k) => n !== '_' && this._voice(NOTE[n], t + k * 0.1, 0.08, { type: 'square', gain: 0.1, dest: d }));
+          break;
+        }
         case 'caught': {
           const o = this.ctx.createOscillator(), g = this.ctx.createGain();
           o.type = 'sawtooth';
@@ -246,6 +312,24 @@
           break;
         }
       }
+    },
+
+    // ambient night soundscape: distant owls + a bed of crickets
+    startAmbience(kind) {
+      if (!this.ctx) return;
+      this.stopAmbience();
+      this._ambKind = kind;
+      this._ambTimer = setInterval(() => {
+        if (!this.enabled || this._ambKind !== kind) return;
+        if (kind === 'night') {
+          if (Math.random() < 0.18) this.sfx('owl');
+          if (Math.random() < 0.7) this.sfx('cricket');
+        }
+      }, 1100);
+    },
+    stopAmbience() {
+      if (this._ambTimer) { clearInterval(this._ambTimer); this._ambTimer = null; }
+      this._ambKind = null;
     },
 
     _noiseBurst(t, dur, gain, dest, cutoff) {

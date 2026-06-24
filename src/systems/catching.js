@@ -93,7 +93,9 @@
       this._burst(ox, oy, hit.sp.glow || '#ffe9a8', 10);
       const isNew = GB.Collection.record(hit.sp.id);
       GB.Audio.sfx(isNew ? 'newentry' : 'catch');
-      return { species: hit.sp, isNew };
+      // XP: rarer catches teach you more; first-time bonus
+      const levels = GB.Story.addXp(hit.sp.rarity * 4 + (isNew ? 6 : 0));
+      return { species: hit.sp, isNew, levels };
     },
 
     _burst(x, y, color, n) {

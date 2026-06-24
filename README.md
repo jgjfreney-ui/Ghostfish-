@@ -2,10 +2,15 @@
 
 ### *a cozy summer of bugs & ghosts*
 
-You're a kid on summer holiday in a sleepy Japanese town. By day you chase bugs
-with your net — lifting rocks, rustling the grass, shaking the trees, peering at
-the water's edge. By night, if you're brave (or naughty) enough to sneak out past
-your parents, the shut-up town fills with cute little **yokai** to catch instead.
+You're **Ryosuke**, a kid on summer holiday in your sleepy hometown — your dad's
+an American who moved here for your mum, who grew up on these streets. By day you
+chase bugs with your net — lifting rocks, rustling the grass, shaking the trees,
+peering at the water's edge. By night, if you're brave (or naughty) enough to
+sneak out past your parents, the shut-up town fills with cute little **yokai** to
+catch instead.
+
+There's a quieter story under the bug-catching, too — about how Ryosuke's really
+doing, and the week building toward his grandparents' visit.
 
 A *Yokai Watch* / *Animal Crossing* collection game with an *Undertale / Earthbound*
 soul — built to feel **tactile**: the world is something you poke, lift, and rummage
@@ -18,8 +23,13 @@ through, not just walk over.
 
 ## ▶ How to play
 
-Just open **`index.html`** in any modern browser. No build step, no install — the
-whole game (art included) is drawn in code, and the music is synthesized live.
+**On a computer:** just open **`index.html`** in any modern browser. No build step,
+no install — the whole game (art included) is drawn in code, and the music is
+synthesized live.
+
+**On a phone (Android / Pixel):** download the **`Ghostbug.apk`** built by CI and
+sideload it — see [`android/README.md`](android/README.md). It installs and runs
+like a normal offline app.
 
 > Tip: some browsers restrict audio until you click — that's why the game starts on
 > a **▶ Start Summer** button.
@@ -37,24 +47,36 @@ whole game (art included) is drawn in code, and the music is synthesized live.
 
 ## ☀ The day, the night, the week
 
-1. **Daytime** — Roam one big, open map (no loading zones). Lift **rocks**, search
-   **grass** and **bushes**, shake **trees**, and check the **water's edge**. Each
-   habitat hides different bugs. Talk to adult NPCs about their wonderfully boring
-   grown-up problems. Do your **chore** for a good-kid point. Enter the store,
-   school, clinic, and shrine.
-2. **Sundown** — A warning: *get home before dark.* Make it back to your house in
-   time and you're a good kid; dawdle and your parents notice.
-3. **Evening** — Dinner with Mum and Dad, then up to **your room**, where your
-   **collection enclosures** visibly fill up as you catch more.
-4. **Lights out** — Sleep soundly… **or sneak out at midnight.**
-5. **Midnight** — The town is shut. Buildings are locked — find their **secret
-   entrances** (and the **abandoned buildings** hidden in the woods). Catch
-   **nocturnal bugs** and cozy-spooky **ghosts**. Then sneak home **before dawn**,
-   or get caught at the door and lose standing.
-6. **Dawn** — The day advances. A new chore, a new weekday, the summer rolls on.
+The summer opens on the **last day of term** — school lets out, and you wake the
+next morning in **your room** (bed, handheld console, and a spiderweb in the
+corner Ryosuke isn't quite ready to deal with). Mum and Dad hand you a **net, a
+torch, and a camera**, and the only mission is to *enjoy the day.*
 
-Your **standing** (Golden Child ↔ Little Troublemaker) shifts with your choices,
-and your collection + progress **save automatically** in your browser.
+1. **Morning** — Wake in your room. Head downstairs and out into town.
+2. **Daytime** — Roam one big, open map (no loading zones). Lift **rocks**, search
+   **grass** and **bushes**, shake **trees**, and check the **water's edge**. Each
+   habitat hides different bugs. Talk to NPCs (Dad's an American expat, Mum's a
+   local — their lines shift with the story). Do your **chore**. Enter the store,
+   school, clinic, and shrine. Catching things and finishing tasks earns **XP and
+   levels**.
+3. **Sundown** — A warning: *get home before dark.* On time = good kid; dawdle and
+   your parents notice.
+4. **Evening** — Dinner with Mum and Dad, then up to **your room**: scroll your
+   **collection enclosures** (one cute cage per bug, filling up over time), play
+   your **handheld**, or climb into **bed**.
+5. **The middle of the night** — As you sleep you hear owls and crickets… then
+   Ryosuke stirs awake. *Go back to sleep?* **Yes** → morning. **No** → slip out
+   of the covers into the dark.
+6. **Sneaking out** — The town is shut. Buildings are locked — find their **secret
+   entrances** (and the **abandoned buildings** hidden in the woods; the torch
+   lights your way). Catch **nocturnal bugs** and cozy-spooky **ghosts**, then
+   sneak home **before dawn** or get caught at the door.
+7. **The grandparents** — One week in (the next Saturday) Obaachan and Ojiichan are
+   at the table when you come home. They ask Ryosuke how he's *really* been. You
+   can tell the truth… or lie. It matters.
+
+Your **standing** (Golden Child ↔ Little Troublemaker) and **level** shift with
+your choices, and your collection + progress **save automatically**.
 
 ---
 
@@ -95,9 +117,13 @@ src/
     catching.js       # lift/rustle/search interactions + the net catch
     collection.js     # the Mushizukan log + save
     reputation.js     # week, chores, good-kid/bad-kid standing
+    story.js          # levels/XP, items, and the narrative flags
   ui/
     ui.js             # HUD, dialogue, toasts, collection journal
-  main.js             # game loop, daily cycle, interiors, scenes
+  main.js             # game loop, intro, bedroom hub, night-wake, scenes
+android/              # native WebView wrapper -> sideloadable APK
+.github/workflows/
+  android-apk.yml     # CI: builds Ghostbug.apk as a downloadable artifact
 ```
 
 ---
@@ -110,11 +136,16 @@ src/
 - [x] Cozy-spooky night mode with ghosts, secret entrances, abandoned buildings
 - [x] Collection log (bugs + yokai) with auto-save
 - [x] Chores + good-kid / bad-kid standing + week system
-- [x] Procedural day/night/title soundtrack + tactile SFX
-- [ ] **Main campaign** — a story that takes you across the map and through moods
+- [x] Procedural day/night/title/tender soundtrack + tactile SFX + night ambience
+- [x] Intro cutscene, bedroom hub, the middle-of-the-night wake decision
+- [x] Levels & XP, items (net / torch / camera), the spiderweb (level-15 gate)
+- [x] Story opening: the grandparents' visit + the mental-health scene
+- [x] Dad (American) / Mum (Japanese) dialogue that reacts to the story
+- [x] Sideloadable Android APK + CI build
+- [ ] **Main campaign** — extend the story across the whole summer
 - [ ] **Questlines** from NPCs that unlock the best content
 - [ ] Festival days, weather, seasons
-- [ ] Richer interiors and a real bedroom hub
+- [ ] The Game Boy mini-game as a real little game
 - [ ] More species, rare time-and-weather-gated yokai
 - [ ] Hand-pixeled art passes & expanded original soundtrack
 

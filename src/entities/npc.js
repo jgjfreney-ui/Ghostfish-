@@ -47,7 +47,7 @@
       const home = B.find(b => b.kind === 'home');
       this.list.push(makeNPC('shopkeeper', store.x + 1, store.y + store.h + 1, { body: '#c87a4a', hair: '#3a2a1a' }, store));
       this.list.push(makeNPC('teacher', school.x + school.w + 1, school.y + school.h, { body: '#4a6a8a', hair: '#2a2a2a' }, school));
-      this.list.push(makeNPC('grandpa', shrine.x - 2, shrine.y + shrine.h + 1, { body: '#8a8a7a', hair: '#d0d0d0' }, shrine));
+      this.list.push(makeNPC('grandpa_sato', shrine.x - 2, shrine.y + shrine.h + 1, { body: '#8a8a7a', hair: '#d0d0d0' }, shrine));
       this.list.push(makeNPC('kid', home.x + home.w + 3, home.y, { body: '#5aaa5a', hair: '#5a3a1a' }, home));
       this.list.push(makeNPC('dad', home.x - 2, home.y + 1, { body: '#6a6a8a', hair: '#2a2a2a' }, home));
     },

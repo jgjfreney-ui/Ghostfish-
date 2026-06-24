@@ -1,7 +1,7 @@
 // Ghostbug — the week, chores, and the good-kid / bad-kid standing with parents.
 (function (GB) {
   const KEY = 'ghostbug.rep.v1';
-  const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const DAYS = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri']; // summer starts on a Saturday
 
   const Reputation = {
     day: 1,            // day counter (1..)
