@@ -1,0 +1,135 @@
+:root {
+  --cozy-bg: #1a1226;
+  --ink: #2b2233;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0d0a14;
+  color: #f4ecd6;
+  font-family: ui-monospace, "Courier New", monospace;
+  overflow: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#game-shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% 30%, #241a33 0%, #0d0a14 70%);
+}
+
+#game {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  width: min(96vw, 96vh * (320 / 240));
+  height: auto;
+  aspect-ratio: 320 / 240;
+  background: #0d0a14;
+  box-shadow: 0 0 0 3px #2b2233, 0 0 40px rgba(0,0,0,0.7);
+  border-radius: 4px;
+  touch-action: none;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 10, 20, 0.92);
+  z-index: 20;
+}
+.overlay.hidden { display: none; }
+
+.boot-card {
+  text-align: center;
+  padding: 28px 34px;
+}
+.boot-card h1 {
+  font-size: 44px;
+  letter-spacing: 6px;
+  margin: 0;
+  color: #ffe9a8;
+  text-shadow: 0 3px 0 #7a4adb, 3px 3px 0 #3a2a55;
+  animation: bob 3s ease-in-out infinite;
+}
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.boot-card .sub {
+  color: #b9a6e0;
+  margin: 6px 0 22px;
+  letter-spacing: 1px;
+}
+#start-btn {
+  font-family: inherit;
+  font-size: 18px;
+  padding: 12px 26px;
+  background: #6b4bb0;
+  color: #fff;
+  border: 3px solid #ffe9a8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform .1s, background .15s;
+}
+#start-btn:hover { background: #7d5ac8; transform: scale(1.05); }
+.boot-card .hint {
+  margin-top: 24px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #8c7eb0;
+}
+
+/* Touch controls */
+#touch-controls {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 15;
+}
+#touch-controls.hidden { display: none; }
+#dpad {
+  position: absolute;
+  left: 18px;
+  bottom: 24px;
+  width: 150px;
+  height: 150px;
+  pointer-events: auto;
+}
+.dpad-btn {
+  position: absolute;
+  width: 48px; height: 48px;
+  font-size: 18px;
+  background: rgba(107,75,176,0.7);
+  color: #fff;
+  border: 2px solid #ffe9a8;
+  border-radius: 10px;
+}
+.dpad-btn.up    { left: 51px; top: 0; }
+.dpad-btn.down  { left: 51px; top: 102px; }
+.dpad-btn.left  { left: 0;   top: 51px; }
+.dpad-btn.right { left: 102px; top: 51px; }
+#action-buttons {
+  position: absolute;
+  right: 22px;
+  bottom: 40px;
+  pointer-events: auto;
+}
+.act-btn {
+  width: 60px; height: 60px;
+  margin: 6px;
+  font-size: 22px;
+  border-radius: 50%;
+  border: 2px solid #ffe9a8;
+  color: #fff;
+}
+.act-btn.a { background: rgba(206,90,120,0.85); }
+.act-btn.b { background: rgba(75,130,176,0.85); }
+.act-btn:active, .dpad-btn:active { filter: brightness(1.3); }

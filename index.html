@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ghostbug — A Cozy Summer of Bugs &amp; Ghosts</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="game-shell">
+    <canvas id="game" width="320" height="240"></canvas>
+
+    <!-- Touch controls (mobile) -->
+    <div id="touch-controls" class="hidden">
+      <div id="dpad">
+        <button data-key="ArrowUp"    class="dpad-btn up">▲</button>
+        <button data-key="ArrowLeft"  class="dpad-btn left">◀</button>
+        <button data-key="ArrowRight" class="dpad-btn right">▶</button>
+        <button data-key="ArrowDown"  class="dpad-btn down">▼</button>
+      </div>
+      <div id="action-buttons">
+        <button data-key="KeyZ" class="act-btn a">A</button>
+        <button data-key="KeyX" class="act-btn b">B</button>
+      </div>
+    </div>
+
+    <div id="boot" class="overlay">
+      <div class="boot-card">
+        <h1>GHOSTBUG</h1>
+        <p class="sub">a cozy summer of bugs &amp; ghosts</p>
+        <button id="start-btn">▶ Start Summer</button>
+        <p class="hint">Move: Arrow keys / WASD &nbsp;·&nbsp; A: <b>Z</b> &nbsp;·&nbsp; B: <b>X</b><br/>
+        Lift rocks, search grass, swing your net. Get home by sundown… or don't.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- data -->
+  <script src="src/engine/utils.js"></script>
+  <script src="src/engine/audio.js"></script>
+  <script src="src/engine/input.js"></script>
+  <script src="src/data/species.js"></script>
+  <script src="src/data/dialogue.js"></script>
+  <!-- render -->
+  <script src="src/render/sprites.js"></script>
+  <!-- world + entities -->
+  <script src="src/world/world.js"></script>
+  <script src="src/entities/player.js"></script>
+  <script src="src/entities/npc.js"></script>
+  <script src="src/entities/critter.js"></script>
+  <!-- systems -->
+  <script src="src/systems/time.js"></script>
+  <script src="src/systems/catching.js"></script>
+  <script src="src/systems/collection.js"></script>
+  <script src="src/systems/reputation.js"></script>
+  <!-- ui -->
+  <script src="src/ui/ui.js"></script>
+  <!-- main -->
+  <script src="src/main.js"></script>
+</body>
+</html>
