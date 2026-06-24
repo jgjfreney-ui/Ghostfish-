@@ -52,6 +52,11 @@
       this._addBuilding('store', 'Sato General Store', 46, 26, 6, 5, { secret: [46, 30] });
       this._addBuilding('hospital', 'Town Clinic', 60, 24, 7, 5, { secret: [66, 28] });
       this._addBuilding('shrine', 'Inari Shrine', 64, 46, 5, 5, { secret: [64, 50] });
+      // the park — daytime play, and a lonelier place after dark
+      this._addBuilding('park', 'Komorebi Park', 30, 40, 7, 5, { secret: [33, 44] });
+      // a cave hidden deep in the north woods (only matters once her story is told)
+      this._addBuilding('cave', 'Hidden Cave', 14, 2, 4, 3, {});
+
       // abandoned places hidden in the nature fringes
       this._addBuilding('abandoned', 'Old Yamada House', 8, 8, 5, 4, { secret: [10, 11], abandoned: true });
       this._addBuilding('abandoned', 'Ruined Mill', 80, 10, 5, 4, { secret: [82, 13], abandoned: true });

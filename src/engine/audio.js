@@ -122,6 +122,50 @@
                'D3','_','A3','_','_','_','F3','_','E3','_','B3','_','_','_','_','_'],
         leadType: 'triangle', bassType: 'sine', arpType: 'sine', arpGain: 0.045,
       },
+      // the park at night — a lonely, pretty nocturne
+      park: {
+        bpm: 72,
+        lead: ['E4','_','G4','_','B4','_','A4','G4','E4','_','D4','_','E4','_','_','_',
+               'C5','_','B4','_','G4','_','A4','_','B4','_','G4','E4','D4','_','_','_'],
+        bass: ['A2','_','_','_','E2','_','_','_','F2','_','_','_','C2','_','_','_',
+               'A2','_','_','_','E2','_','_','_','D2','_','_','_','E2','_','_','_'],
+        arp:  ['A3','E4','A4','E4','_','_','_','_','F3','C4','F4','C4','_','_','_','_',
+               'A3','E4','A4','E4','_','_','_','_','E3','B3','E4','B3','_','_','_','_'],
+        leadType: 'triangle', bassType: 'sine', arpType: 'triangle', arpGain: 0.05,
+      },
+      // the cave — sparse, cold, dripping minor
+      cave: {
+        bpm: 66,
+        lead: ['D4','_','_','_','F4','_','_','E4','D4','_','_','_','A3','_','_','_',
+               'C4','_','_','_','D4','_','_','_','F4','_','E4','_','D4','_','_','_'],
+        bass: ['D1','_','_','_','_','_','_','_','D1','_','_','_','_','_','_','_',
+               'As1','_','_','_','_','_','_','_','A1','_','_','_','_','_','_','_'],
+        arp:  ['D3','_','_','A3','_','_','D4','_','_','_','F3','_','_','_','_','_',
+               'C3','_','_','G3','_','_','C4','_','_','_','A3','_','_','_','_','_'],
+        leadType: 'sine', bassType: 'sine', arpType: 'triangle', arpGain: 0.04,
+      },
+      // the Ghost of the Father — close, heavy, wrong
+      father: {
+        bpm: 92,
+        lead: ['A3','_','A3','As3','A3','_','_','E4','F4','_','E4','_','D4','_','_','_',
+               'A3','_','A3','As3','C4','_','_','A3','Gs3','_','A3','_','_','_','_','_'],
+        bass: ['A1','A1','_','_','A1','A1','_','_','F1','F1','_','_','E1','E1','_','_',
+               'A1','A1','_','_','A1','A1','_','_','E1','E1','_','_','E1','_','_','_'],
+        arp:  ['E3','_','F3','_','E3','_','As3','_','A3','_','_','_','Gs3','_','_','_',
+               'E3','_','F3','_','E3','_','As3','_','A3','_','Gs3','_','A3','_','_','_'],
+        leadType: 'sawtooth', bassType: 'triangle', arpType: 'square', arpGain: 0.05,
+      },
+      // she can rest — bittersweet, warm, finally at peace
+      freed: {
+        bpm: 68,
+        lead: ['C5','_','_','E5','D5','_','C5','_','G4','_','C5','_','E5','_','_','_',
+               'F5','_','E5','_','D5','_','C5','_','D5','_','_','_','_','_','_','_'],
+        bass: ['C2','_','_','_','G2','_','_','_','A2','_','_','_','F2','_','_','_',
+               'C2','_','_','_','E2','_','_','_','F2','_','G2','_','C2','_','_','_'],
+        arp:  ['C4','E4','G4','C5','G3','B3','D4','G4','A3','C4','E4','A4','F3','A3','C4','F4',
+               'C4','E4','G4','C5','E4','G4','B4','E5','F4','A4','C5','F5','G3','C4','E4','G4'],
+        leadType: 'triangle', bassType: 'sine', arpType: 'triangle', arpGain: 0.05,
+      },
     },
 
     playSong(name) {
@@ -299,6 +343,44 @@
         case 'gameboy': { // playful handheld jingle
           const seq = ['E5', 'E5', '_', 'E5', '_', 'C5', 'E5', '_', 'G5', '_', '_', 'G4'];
           seq.forEach((n, k) => n !== '_' && this._voice(NOTE[n], t + k * 0.1, 0.08, { type: 'square', gain: 0.1, dest: d }));
+          break;
+        }
+        case 'drip': { // a single cave water-drop
+          const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(1400, t);
+          o.frequency.exponentialRampToValueAtTime(500, t + 0.12);
+          g.gain.setValueAtTime(0.08, t);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+          o.connect(g); g.connect(d); o.start(t); o.stop(t + 0.2);
+          break;
+        }
+        case 'ghostgirl': { // her soft, sad little voice-blip
+          this._voice(NOTE['A4'], t, 0.1, { type: 'sine', gain: 0.07, dest: d });
+          this._voice(NOTE['E4'], t + 0.1, 0.14, { type: 'sine', gain: 0.06, dest: d });
+          break;
+        }
+        case 'reveal': { // the truth lands — a low, cold sting
+          const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+          o.type = 'sawtooth';
+          o.frequency.setValueAtTime(160, t);
+          o.frequency.exponentialRampToValueAtTime(70, t + 0.9);
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(0.12, t + 0.1);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + 1.0);
+          o.connect(g); g.connect(d); o.start(t); o.stop(t + 1.05);
+          this._voice(NOTE['As2'], t, 1.0, { type: 'triangle', gain: 0.05, dest: d });
+          break;
+        }
+        case 'unlock': { // the cave opens
+          ['C4', 'G4', 'C5', 'G4', 'C5', 'E5'].forEach((n, k) =>
+            this._voice(NOTE[n], t + k * 0.1, 0.16, { type: 'triangle', gain: 0.12, dest: d }));
+          break;
+        }
+        case 'free': { // she is released — a rising, peaceful chime
+          ['C5', 'E5', 'G5', 'C6', 'E6', 'G6', 'C6'].forEach((n, k) =>
+            this._voice(NOTE[n] || (440 * Math.pow(2, (84 + k - 69) / 12)), t + k * 0.12, 0.4,
+              { type: 'sine', gain: 0.1, dest: d }));
           break;
         }
         case 'caught': {

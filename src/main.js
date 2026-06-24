@@ -10,6 +10,8 @@
     get pxH() { return this.rows * T; },
     minX: T, minY: T, pad: T,
     building: null, night: false,
+    catch: false, dark: false, ghostKid: false, habitat: 'ghost', location: null,
+    kidTile: { x: 9, y: 2 },
     enter(building, night) {
       this.active = true; this.building = building; this.night = night;
     },
@@ -233,13 +235,23 @@
 
     doSwing() {
       const res = GB.Catching.swing(GB.Player);
-      if (res) {
-        const t = GB.Collection.totals();
-        GB.UI.message(res.isNew
-          ? `★ NEW! ${res.species.name} added to your log! (${t.all}/${t.allTotal})`
-          : `Caught a ${res.species.name}!`, res.isNew ? 3.5 : 2);
-        if (res.levels) this._levelToast(res.levels);
+      if (!res) return;
+      // catching the one-of-one Father resolves the cave
+      if (res.species.id === 'g_father') {
+        GB.Story.fatherCaught = true; GB.Story.save();
+        GB.Audio.sfx('reveal');
+        GB.UI.dialogue('—', [
+          'The net closes. He doesn\'t fight. He just… stops.',
+          'Something that was wrong for a very long time is, finally, over.',
+          'Go and tell her. Go back to the park.',
+        ]);
+        return;
       }
+      const t = GB.Collection.totals();
+      GB.UI.message(res.isNew
+        ? `★ NEW! ${res.species.name} added to your log! (${t.all}/${t.allTotal})`
+        : `Caught a ${res.species.name}!`, res.isNew ? 3.5 : 2);
+      if (res.levels) this._levelToast(res.levels);
     },
 
     _levelToast(levels) {
@@ -276,22 +288,53 @@
 
     useDoor(building, viaSecret) {
       const night = GB.Time.isNight;
+      const kind = building.kind;
+
       // Reaching home during the evening/curfew triggers the going-home sequence.
-      if (building.kind === 'home' && (GB.Time.phase === 'dusk' || GB.Time.curfew) && !night) {
-        this.startEvening();
-        return;
-      }
+      if (kind === 'home' && (GB.Time.phase === 'dusk' || GB.Time.curfew) && !night) { this.startEvening(); return; }
       // Sneaking back home at night = success, ends the night.
-      if (building.kind === 'home' && night) {
-        this.endNightSafe();
+      if (kind === 'home' && night) { this.endNightSafe(); return; }
+
+      // THE PARK — open by day; at night it opens to you once you're brave enough.
+      if (kind === 'park') {
+        if (night && GB.Story.level < GB.Story.PARK_LEVEL) {
+          GB.Audio.sfx('fail');
+          GB.UI.message(`The park is dark and still. You don't dare, not yet… (Lv.${GB.Story.PARK_LEVEL})`, 3.5);
+          return;
+        }
+        GB.Audio.sfx('door'); this.enterInterior(building, night); return;
+      }
+
+      // THE HIDDEN CAVE — only real once the girl has named her father, and only
+      // if Ryosuke is strong enough to go deep into the night woods.
+      if (kind === 'cave') {
+        if (!GB.Story.fatherRevealed) {
+          GB.Audio.sfx('fail');
+          GB.UI.message('Just a black crack in the rock. Nothing calls to you… yet.', 3);
+          return;
+        }
+        if (GB.Story.level < GB.Story.WOODS_LEVEL) {
+          GB.Audio.sfx('fail');
+          GB.UI.message(`The woods are pitch dark. Ryosuke isn't ready to go this deep. (Lv.${GB.Story.WOODS_LEVEL})`, 4);
+          return;
+        }
+        GB.Audio.sfx('door'); GB.Audio.sfx('drip'); this.enterInterior(building, true); return;
+      }
+
+      // The night woods (abandoned places) — also gated until Ryosuke is brave.
+      if (building.abandoned && night && GB.Story.level < GB.Story.WOODS_LEVEL) {
+        GB.Audio.sfx('fail');
+        GB.UI.message(`It's so dark out here in the woods… not yet. (Lv.${GB.Story.WOODS_LEVEL})`, 3.5);
         return;
       }
+
+      // Town buildings are locked at night — find the secret entrance.
       if (night && !viaSecret && !building.abandoned) {
         GB.Audio.sfx('fail');
         GB.UI.message(`The ${building.name} is locked up tight. Find another way in…`, 3);
         return;
       }
-      // enter interior
+
       GB.Audio.sfx('door');
       this.enterInterior(building, night);
     },
@@ -319,27 +362,61 @@
       GB.env = Interior;
       this.mode = 'interior';
       GB.Catching.reset();
-      // place player at the exit doorway
+      this._gkTip = false; // ghost-girl conversation resets each visit
       const ex = Interior.exitTile();
       GB.Player.x = ex.x * T - 3; GB.Player.y = (ex.y - 1) * T; GB.Player.dir = 1;
       this.cam.x = -(VW - Interior.pxW) / 2;
       this.cam.y = -(VH - Interior.pxH) / 2;
 
-      if (night) {
-        // spawn cute ghosts (rarer in abandoned places)
-        const habitat = building.abandoned ? 'abandoned' : 'ghost';
-        const n = building.abandoned ? 2 : 3;
-        for (let i = 0; i < n; i++) {
-          const sp = GB.rollSpecies(habitat, true) || GB.rollSpecies('ghost', true);
-          if (!sp) continue;
-          const c = GB.makeCritter(sp, GB.util.rand(T * 2, Interior.pxW - T * 2), GB.util.rand(T * 2, Interior.pxH - T * 3));
-          GB.Catching.critters.push(c);
-        }
-        GB.Audio.sfx('ghost');
-        GB.UI.message('Something glows in the dark. Swing your net! (X)', 3.5);
+      const kind = building.kind;
+      Interior.location = kind;
+      let habitat, song;
+      if (kind === 'park') {
+        habitat = 'park'; Interior.dark = night; Interior.catch = true;
+        Interior.ghostKid = night && !GB.Story.ghostKidFreed;
+        song = night ? 'park' : 'day';
+      } else if (kind === 'cave') {
+        habitat = 'cave'; Interior.dark = true; Interior.catch = true; Interior.ghostKid = false;
+        song = GB.Story.fatherCaught ? 'cave' : 'father';
+      } else if (building.abandoned) {
+        habitat = 'abandoned'; Interior.dark = night; Interior.catch = night; Interior.ghostKid = false;
+        song = night ? 'night' : 'day';
       } else {
-        GB.UI.message('Press Z to chat · Press X or step out the door to leave', 3);
+        habitat = 'ghost'; Interior.dark = night; Interior.catch = night; Interior.ghostKid = false;
+        song = night ? 'night' : 'day';
       }
+      Interior.habitat = habitat;
+
+      if (Interior.catch) this._spawnInteriorCritters(building, night, habitat);
+      GB.Audio.playSong(song);
+
+      // contextual hint
+      if (kind === 'cave' && !GB.Story.fatherCaught)
+        GB.UI.message('Something old and angry waits in the dark. Find it. (X to swing)', 4.5);
+      else if (Interior.ghostKid)
+        GB.UI.message('A little girl sits on the swings, alone. (Z to talk · X to catch)', 4.5);
+      else if (Interior.catch)
+        GB.UI.message('Swing your net at what stirs in here! (X)', 3.5);
+      else
+        GB.UI.message('Press Z to chat · Press X or step out the door to leave', 3);
+    },
+
+    _spawnInteriorCritters(building, night, habitat) {
+      const n = habitat === 'cave' ? 4 : building.abandoned ? 2 : 3;
+      const isNight = habitat === 'cave' ? true : night;
+      for (let i = 0; i < n; i++) {
+        const sp = GB.rollSpecies(habitat, isNight) || GB.rollSpecies(habitat, !isNight);
+        if (!sp) continue;
+        const c = GB.makeCritter(sp, GB.util.rand(T * 2, Interior.pxW - T * 2), GB.util.rand(T * 2, Interior.pxH - T * 3));
+        GB.Catching.critters.push(c);
+      }
+      // the one-of-one father, present until he's caught
+      if (habitat === 'cave' && !GB.Story.fatherCaught) {
+        const dad = GB.makeCritter(GB.speciesById['g_father'], Interior.pxW / 2, T * 3);
+        dad.life = 9999;
+        GB.Catching.critters.push(dad);
+      }
+      if (night || habitat === 'cave') GB.Audio.sfx('ghost');
     },
 
     updateInterior(dt) {
@@ -351,7 +428,7 @@
       else {
         if (GB.Input.justPressed('a')) this.interiorInteract();
         if (GB.Input.justPressed('b')) {
-          if (Interior.night) this.doSwing();
+          if (Interior.catch) this.doSwing();
           else this.leaveInterior();
         }
       }
@@ -366,12 +443,84 @@
     },
 
     interiorInteract() {
-      if (Interior.night) { this.doSwing(); return; }
-      // talk to the building's keeper
+      // the lonely girl in the park takes priority when you're beside her
+      if (Interior.ghostKid) {
+        const k = Interior.kidTile;
+        const px = Math.floor(GB.Player.centerX() / T), py = Math.floor((GB.Player.y + GB.Player.h) / T);
+        if (Math.abs(px - k.x) <= 1 && Math.abs(py - k.y) <= 2) { this.talkGhostKid(); return; }
+      }
+      if (Interior.catch) { this.doSwing(); return; }
+      // talk to the building's keeper (town buildings, daytime)
       const keep = { store: 'shopkeeper', school: 'teacher', shrine: 'grandpa_sato', home: 'mum' }[Interior.building.kind];
       const d = keep && GB.getDialogue(keep, 'day');
       if (d) GB.UI.dialogue(d.name, d.lines);
       else GB.UI.dialogue('Clinic', ['A quiet waiting room. A nurse nods. "Mind the heat, little one."']);
+    },
+
+    // ----- the park girl questline -----
+    _ghostTips() {
+      return [
+        '"Ghosts flee when you rush. Walk slow. Let them drift close."',
+        '"Rare ones only come out when you go looking — lift, search, shake. Don\'t just wait."',
+        '"The torch makes the dark smaller. Big things hide where it\'s darkest."',
+        '"Nocturnal bugs love the water at night. The fireflies especially."',
+        '"Be home before dawn. Getting caught isn\'t worth one more catch. ...Usually."',
+        '"The abandoned places hold the shyest yokai. Bring a kind heart."',
+      ];
+    },
+
+    talkGhostKid() {
+      if (GB.Story.ghostKidFreed) return;
+      // returned after the cave — she can rest now
+      if (GB.Story.fatherCaught) { this._freeGhostKid(); return; }
+      // first press each visit: a tip. next press: ask the question.
+      if (!this._gkTip) {
+        this._gkTip = true;
+        GB.Audio.sfx('ghostgirl');
+        GB.UI.dialogue('Lonely Girl', ['"…You came back. Most people don\'t."', GB.util.pick(this._ghostTips())]);
+        return;
+      }
+      this._askGhostKid();
+    },
+
+    _askGhostKid() {
+      GB.Audio.sfx('ghostgirl');
+      // count one "separate" talk per night
+      if (GB.Story.lastParkTalkDay !== GB.Reputation.day) {
+        GB.Story.parkTalks++; GB.Story.lastParkTalkDay = GB.Reputation.day; GB.Story.save();
+      }
+      // the reveal, once she trusts you enough
+      if (GB.Story.parkTalks >= GB.Story.REVEAL_TALKS && !GB.Story.fatherRevealed) {
+        GB.Story.fatherRevealed = true; GB.Story.save();
+        GB.Audio.stop(); GB.Audio.sfx('reveal');
+        GB.UI.dialogue('Lonely Girl', [
+          'You ask again: "How did you end up like this?"',
+          'She is quiet a long, long time. Then, very small:',
+          '"…It was my father. It was him."',
+          '"He\'s still here. In a cave, deep in the night woods. He just… waits."',
+          '"You\'d do that? For me? …Then go. Please. Let me rest."',
+        ], () => { GB.Audio.playSong('park'); GB.UI.message('A cave has woken in the north woods. Be strong before you go in. (Lv.' + GB.Story.WOODS_LEVEL + ')', 6); });
+        return;
+      }
+      // before the reveal — the same gentle refusal, each night a little closer
+      GB.UI.dialogue('Lonely Girl', [
+        'You ask: "How did you end up like this?"',
+        '"I\'d tell you. But it\'s rude to talk bad about someone who\'s listening."',
+        `(She trusts you a little more each night. ${GB.util.clamp(GB.Story.parkTalks, 0, GB.Story.REVEAL_TALKS)}/${GB.Story.REVEAL_TALKS})`,
+      ]);
+    },
+
+    _freeGhostKid() {
+      GB.Story.ghostKidFreed = true;
+      const isNew = GB.Collection.record('g_parkgirl');
+      GB.Story.addXp(30); GB.Story.save();
+      Interior.ghostKid = false;
+      GB.Audio.stop(); GB.Audio.playSong('freed'); GB.Audio.sfx('free');
+      GB.UI.dialogue('The Girl in the Park', [
+        '"You found him. You really… you let me go."',
+        '"I\'ve been so tired, for so long. I think I can sleep now."',
+        '"Thank you, Ryosuke. …Look after yourself too, okay? Truly."',
+      ], () => GB.UI.message('★ The Girl in the Park joins your collection. One of one. ♥', 6));
     },
 
     leaveInterior() {
@@ -884,8 +1033,10 @@
       const c = this.ctx;
       const cam = this.cam;
       this._clear('#1a1622');
-      const floor = Interior.night ? '#2a2438' : '#6a5240';
-      const wall = Interior.night ? '#1f1b2e' : '#4a3628';
+      const cave = Interior.location === 'cave';
+      const park = Interior.location === 'park';
+      const floor = cave ? '#2a2630' : park ? (Interior.dark ? '#2a3a2a' : '#5a8a4a') : (Interior.dark ? '#2a2438' : '#6a5240');
+      const wall = cave ? '#201c28' : park ? '#3a5a2a' : (Interior.dark ? '#1f1b2e' : '#4a3628');
       // floor
       for (let y = 1; y < Interior.rows - 1; y++)
         for (let x = 1; x < Interior.cols - 1; x++) {
@@ -901,20 +1052,34 @@
       c.fillRect((ex.x - 1) * T - cam.x, ex.y * T - cam.y, T * 2, T);
       GB.UI._text(c, 'exit', (ex.x - 1) * T - cam.x + 4, ex.y * T - cam.y + 4, '#3a2a1a');
 
-      // a keeper NPC by day
-      if (!Interior.night) {
+      // a swing set in the park
+      if (park) {
+        const sx = 3 * T - cam.x, sy = 1 * T - cam.y;
+        c.strokeStyle = '#7a5a3a'; c.lineWidth = 1;
+        c.beginPath(); c.moveTo(sx, sy); c.lineTo(sx + 8, sy + 20); c.moveTo(sx + 28, sy); c.lineTo(sx + 20, sy + 20); c.stroke();
+        c.fillStyle = '#5a4030'; c.fillRect(sx + 8, sy + 18, 12, 2);
+      }
+
+      // a keeper NPC by day (town buildings only)
+      if (!Interior.catch) {
         c.save(); c.translate((Interior.cols / 2 + 1) * T - cam.x, 2 * T - cam.y);
         GB.Sprites.npc(c, 0, 0, { body: '#8a5a4a', hair: '#2a2a2a' }, 0);
         c.restore();
       }
 
+      // the lonely girl, on the swings
+      if (Interior.ghostKid) {
+        GB.Sprites.ghostKid(c, Interior.kidTile.x * T - cam.x, Interior.kidTile.y * T - cam.y, GB.World.time, false);
+      }
+
       GB.Catching.draw(c, cam);
       GB.Player.draw(c, cam);
 
-      if (Interior.night) this._interiorDark(c);
+      if (Interior.dark) this._interiorDark(c);
       // header
       c.fillStyle = 'rgba(20,16,30,0.6)'; c.fillRect(0, 0, VW, 12);
-      GB.UI._text(c, (Interior.night ? '☾ ' : '') + Interior.building.name + (Interior.night ? ' (after dark)' : ''), 4, 2, '#ffe9a8');
+      const tag = cave ? ' (deep dark)' : Interior.dark ? ' (after dark)' : '';
+      GB.UI._text(c, (Interior.dark ? '☾ ' : '') + Interior.building.name + tag, 4, 2, '#ffe9a8');
       GB.UI.drawMessage();
       GB.UI.drawDialogue();
     },

@@ -68,6 +68,48 @@
     { id: 'g_noppera', name: 'Faceless Friend', kind: 'ghost', habitat: 'abandoned', time: 'night', rarity: 5,
       palette: ['#cfd0e0', '#ffffff', '#9090a0'], speed: 26, flighty: 0.7, glow: '#e6e8ff',
       blurb: 'Noppera-bo. It only wanted someone to talk to. Hold still and it will smile back.' },
+
+    // ---- PARK: a new place to play (day) and to meet the lonely (night) ----
+    { id: 'bug_atlas', name: 'Atlas Beetle', kind: 'bug', habitat: 'park', time: 'day', rarity: 3,
+      palette: ['#3a2a4a', '#6a4a7a', '#1a1020'], speed: 16, flighty: 0.3,
+      blurb: 'Three great horns like a mountain range. Slow, proud, magnificent.' },
+    { id: 'bug_bluemorpho', name: 'Blue Morpho', kind: 'bug', habitat: 'park', time: 'day', rarity: 2,
+      palette: ['#3a6ad0', '#9ac0ff', '#10204a'], speed: 26, flighty: 0.55,
+      blurb: 'A scrap of fallen sky drifting over the park flowerbeds.' },
+    { id: 'bug_moonmoth', name: 'Moon Moth', kind: 'bug', habitat: 'park', time: 'night', rarity: 3,
+      palette: ['#bfe0c0', '#eafff0', '#5a7a6a'], speed: 20, flighty: 0.45, glow: '#cfffe0',
+      blurb: 'Pale wings that drink the lamplight. Only comes out under the park lamps.' },
+    { id: 'g_swing', name: 'Swing Spirit', kind: 'ghost', habitat: 'park', time: 'night', rarity: 2,
+      palette: ['#6a8ad0', '#a0c0ff', '#2a3a6a'], speed: 18, flighty: 0.4, glow: '#a0c0ff',
+      blurb: 'It just wants someone to push the swing. Back and forth, back and forth, forever.' },
+    { id: 'g_sandbox', name: 'Sandbox Shade', kind: 'ghost', habitat: 'park', time: 'night', rarity: 3,
+      palette: ['#caa86a', '#ead0a0', '#6a4a20'], speed: 22, flighty: 0.5, glow: '#ead0a0',
+      blurb: 'Builds little sand castles that always crumble before the dawn.' },
+
+    // ---- CAVE: hidden deep in the woods, unlocked by the park girl's story ----
+    { id: 'bug_cavecricket', name: 'Cave Cricket', kind: 'bug', habitat: 'cave', time: 'any', rarity: 1,
+      palette: ['#5a5040', '#7a705a', '#2a2418'], speed: 24, flighty: 0.4,
+      blurb: 'Long pale legs, grown for a life with no sun.' },
+    { id: 'bug_glowworm', name: 'Glow-worm', kind: 'bug', habitat: 'cave', time: 'any', rarity: 2,
+      palette: ['#2a3a2a', '#aaff90', '#101808'], speed: 8, flighty: 0.2, glow: '#bfffa0',
+      blurb: 'A living constellation strung across the cave ceiling.' },
+    { id: 'bug_blindbeetle', name: 'Blind Beetle', kind: 'bug', habitat: 'cave', time: 'any', rarity: 4,
+      palette: ['#d0ccc0', '#ffffff', '#8a8478'], speed: 18, flighty: 0.4,
+      blurb: 'Ghost-white, eyeless, ancient. It has never once seen a star.' },
+    { id: 'g_caveshade', name: 'Cave Shade', kind: 'ghost', habitat: 'cave', time: 'any', rarity: 2,
+      palette: ['#3a3a4a', '#5a5a7a', '#10101a'], speed: 18, flighty: 0.45, glow: '#5a5a8a',
+      blurb: 'A shadow that quietly peeled itself off the cave wall.' },
+    { id: 'g_dripspecter', name: 'Dripping Specter', kind: 'ghost', habitat: 'cave', time: 'any', rarity: 3,
+      palette: ['#4a6a7a', '#8ab0c0', '#1a2a34'], speed: 16, flighty: 0.4, glow: '#8ab0c0',
+      blurb: 'Drip… drip… it weeps cold water that never reaches the floor.' },
+
+    // ---- ONE-OF-ONES (story; never spawn randomly) ----
+    { id: 'g_father', name: 'Ghost of the Father', kind: 'ghost', habitat: 'cave', time: 'any', rarity: 5,
+      unique: true, palette: ['#5a2a2a', '#8a4a4a', '#1a0808'], speed: 24, flighty: 0.5, glow: '#a04a4a',
+      blurb: 'He waited in the dark a very long time. He does not get to wait any longer.' },
+    { id: 'g_parkgirl', name: 'The Girl in the Park', kind: 'ghost', habitat: 'park', time: 'night', rarity: 5,
+      unique: true, palette: ['#cfd0e8', '#ffffff', '#9090b0'], speed: 0, flighty: 0, glow: '#e6e8ff',
+      blurb: 'She kept her seat on the swings until someone finally sat and listened. Now she can rest.' },
   ];
 
   GB.speciesById = {};
@@ -77,7 +119,7 @@
   GB.rollSpecies = function (habitat, isNight) {
     const phase = isNight ? 'night' : 'day';
     const pool = GB.SPECIES.filter(s =>
-      s.habitat === habitat &&
+      s.habitat === habitat && !s.unique &&
       (s.time === 'any' || s.time === phase));
     if (!pool.length) return null;
     // weight: common (rarity 1) much more likely than legendary

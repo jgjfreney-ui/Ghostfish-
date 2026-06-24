@@ -85,12 +85,16 @@
               : kind === 'school' ? '#c8c2b0'
               : kind === 'hospital' ? '#e4e8ec'
               : kind === 'shrine' ? '#b03a3a'
+              : kind === 'park' ? '#6aa84a'
+              : kind === 'cave' ? '#4a4450'
               : '#7a6a5a';
     const roof = kind === 'home' ? '#8a4a3a'
               : kind === 'store' ? '#5a7a8a'
               : kind === 'school' ? '#7a8a6a'
               : kind === 'hospital' ? '#7aa8c8'
               : kind === 'shrine' ? '#3a2a2a'
+              : kind === 'park' ? '#3a7a2a'
+              : kind === 'cave' ? '#26222e'
               : '#3a3038';
     const roofH = Math.floor(H * 0.42);
     // wall
@@ -297,6 +301,29 @@
     }
     px(ctx, x + T / 2 - 1, y, 2, T, '#4a3424');
     px(ctx, x, y + T / 2 - 1, T, 2, '#4a3424');
+  };
+
+  // the lonely girl in the park (a gentle, sad little ghost)
+  S.ghostKid = (ctx, x, y, t, freeing) => {
+    const fl = Math.sin(t * 2) * 1.2;
+    y += fl;
+    // soft aura
+    ctx.fillStyle = '#e6e8ff';
+    ctx.globalAlpha = (freeing ? 0.4 : 0.16) + 0.08 * (Math.sin(t * 3) * 0.5 + 0.5);
+    ctx.beginPath(); ctx.arc(x + 6, y + 8, 12, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+    // dress / body (translucent)
+    ctx.globalAlpha = freeing ? GB.util.clamp(1 - (t % 3) / 3, 0.2, 1) : 0.9;
+    px(ctx, x + 3, y + 7, 6, 8, '#cfd0e8');   // dress
+    px(ctx, x + 2, y + 13, 8, 2, '#bfc0d8');  // hem
+    px(ctx, x + 4, y + 1, 5, 6, '#eaeaf6');   // head
+    px(ctx, x + 3, y, 7, 3, '#9aa0c0');       // hair
+    px(ctx, x + 3, y + 2, 1, 5, '#9aa0c0');   // side hair
+    px(ctx, x + 9, y + 2, 1, 5, '#9aa0c0');
+    // quiet eyes
+    px(ctx, x + 5, y + 4, 1, 2, '#3a3a5a');
+    px(ctx, x + 8, y + 4, 1, 2, '#3a3a5a');
+    ctx.globalAlpha = 1;
   };
 
   // sparkle particle

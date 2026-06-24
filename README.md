@@ -27,9 +27,12 @@ through, not just walk over.
 no install — the whole game (art included) is drawn in code, and the music is
 synthesized live.
 
-**On a phone (Android / Pixel):** download the **`Ghostbug.apk`** built by CI and
-sideload it — see [`android/README.md`](android/README.md). It installs and runs
-like a normal offline app.
+**On a phone (Android / Pixel):** two options —
+- **Single file:** build `dist/Ghostbug.html` with `node tools/build-single-file.js`
+  (or grab the `Ghostbug-HTML` artifact from CI), open it in Chrome, then
+  **⋮ → Add to Home Screen**. Runs offline, feels like an app, no install prompt.
+- **APK:** download the **`Ghostbug.apk`** built by CI and sideload it — see
+  [`android/README.md`](android/README.md).
 
 > Tip: some browsers restrict audio until you click — that's why the game starts on
 > a **▶ Start Summer** button.
@@ -141,9 +144,15 @@ android/              # native WebView wrapper -> sideloadable APK
 - [x] Levels & XP, items (net / torch / camera), the spiderweb (level-15 gate)
 - [x] Story opening: the grandparents' visit + the mental-health scene
 - [x] Dad (American) / Mum (Japanese) dialogue that reacts to the story
-- [x] Sideloadable Android APK + CI build
+- [x] Two more places to explore: the **Park** and a hidden **Cave** (new bugs
+      & ghosts in each)
+- [x] The **park girl questline** — ten nights of talking, the truth about her
+      father, the cave that opens, the one-of-one "Ghost of the Father", and
+      setting her free as a one-of-one of her own
+- [x] Level gates: park at night (Lv.5), the deep night woods + cave (Lv.20)
+- [x] Single-file `Ghostbug.html` build + sideloadable Android APK + CI
 - [ ] **Main campaign** — extend the story across the whole summer
-- [ ] **Questlines** from NPCs that unlock the best content
+- [ ] **More questlines** from NPCs that unlock the best content
 - [ ] Festival days, weather, seasons
 - [ ] The Game Boy mini-game as a real little game
 - [ ] More species, rare time-and-weather-gated yokai

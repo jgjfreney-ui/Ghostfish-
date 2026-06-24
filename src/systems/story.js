@@ -19,7 +19,17 @@
     liedToGrandparents: null,   // null = not asked yet, true = lied, false = told truth
     photos: 0,                  // bugs photographed with the camera
 
+    // --- the park girl questline ---
+    parkTalks: 0,               // separate nights you've asked her "how did you end up like this?"
+    lastParkTalkDay: 0,         // so each night counts only once
+    fatherRevealed: false,      // she has named her father -> the cave appears
+    fatherCaught: false,        // you caught the Ghost of the Father in the cave
+    ghostKidFreed: false,       // you returned to her afterward; she rests
+
     GRANDPARENTS_DAY: 8,        // the next Saturday
+    PARK_LEVEL: 5,              // the park opens to you at night here
+    WOODS_LEVEL: 20,           // Ryosuke won't go deep into the night woods until here
+    REVEAL_TALKS: 10,           // talks needed before she tells you the truth
 
     load() {
       try {
@@ -35,6 +45,9 @@
           grandparentsAnnounced: this.grandparentsAnnounced,
           grandparentsVisited: this.grandparentsVisited,
           liedToGrandparents: this.liedToGrandparents, photos: this.photos,
+          parkTalks: this.parkTalks, lastParkTalkDay: this.lastParkTalkDay,
+          fatherRevealed: this.fatherRevealed, fatherCaught: this.fatherCaught,
+          ghostKidFreed: this.ghostKidFreed,
         }));
       } catch (e) { /* ignore */ }
     },
